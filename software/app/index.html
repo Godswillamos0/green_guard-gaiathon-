@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stitch Design - Responsive</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+</head>
+<body class="bg-white font-['Inter','Noto_Sans',sans-serif]">
+  <div class="flex flex-col min-h-screen justify-between overflow-x-hidden">
+    <!-- Header -->
+    <header class="flex items-center justify-between px-4 py-2 sm:px-6 bg-white">
+      <h2 class="text-lg font-bold text-[#111811]">My Footprint</h2>
+      <button class="w-10 h-10 flex items-center justify-center">
+        <!-- gear icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor">
+          <path d="..."></path>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Content Container -->
+    <main class="flex-1 overflow-auto px-4 sm:px-6 py-4 max-w-xl mx-auto">
+      <!-- Progress Section -->
+      <section class="mb-6">
+        <div class="flex justify-between items-center">
+          <p class="font-medium text-[#111811]">Your Carbon Footprint</p>
+          <p class="text-sm text-[#111811]">60%</p>
+        </div>
+        <div class="mt-2 rounded bg-[#dce5dc] h-2 w-full">
+          <div class="h-2 rounded bg-[#111811]" style="width: 60%;"></div>
+        </div>
+        <p class="mt-1 text-sm text-[#638863]">Compared to last month</p>
+      </section>
+
+      <!-- Tips Header -->
+      <h3 class="text-[22px] font-bold text-[#111811] mb-4">Tips for a Greener Life</h3>
+
+      <!-- Tip Cards: stack vertically on mobile -->
+      <div class="space-y-6">
+        <!-- Tip 1 -->
+        <div class="flex flex-col sm:flex-row gap-4">
+          <div class="flex-1">
+            <p class="text-sm text-[#638863]">Reduce Energy Consumption</p>
+            <p class="text-base font-bold text-[#111811]">Switch to LED Lighting</p>
+            <p class="text-sm text-[#638863]">LED bulbs use up to 75% less energy and last longer than incandescent bulbs.</p>
+          </div>
+          <div
+            class="w-full sm:w-1/2 aspect-video rounded-xl bg-center bg-cover"
+            style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuCvhFkzDA8HhdwU-tHYFuTM407GyzsUX3Pfm0ywsGEUZT02sI_unDBcNEh-DnX63iaTrskCF33fWqYP5Dht5QDspa45HR_KPugqVP4FZEBESKBAjtDASbPHzS-u7OLknF9OhTe7JItRF6c1EuLEC4KeculHAjSRLErmts7qgi_rDcS5v0YG8bpMMOiTJRupv4b69LoK4_lvJsANJfY-PYd1anRMAxuR-_ynpUPAH2fux1HequDVJTyGSvNDRd_b5uNRoA-5Wr9ateQ')"
+          ></div>
+        </div>
+
+        <!-- Tip 2 -->
+        <div class="flex flex-col sm:flex-row gap-4">
+          <div class="flex-1">
+            <p class="text-sm text-[#638863]">Sustainable Transportation</p>
+            <p class="text-base font-bold text-[#111811]">Bike or Walk for Short Trips</p>
+            <p class="text-sm text-[#638863]">Choosing to bike or walk instead of driving reduces your carbon emissions and improves your health.</p>
+          </div>
+          <div
+            class="w-full sm:w-1/2 aspect-video rounded-xl bg-center bg-cover"
+            style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuAuFklarYlLo7NPpWvAf7ni6h1s2eNOrfdaJKW_HRLxM_daIcxySTyxf8DT_N_7HnvL1o3jqYflE95svNNex1iIgfRBamEHdiy2IqnPwjFvm77S6tyg7nba_gCWD2gXT3mQviEaeg9L8XXd8NP1SBiziyhx-SRMFUHNrIrVFOYh2mF-zwKygLel1mJr_8RiJOY7ChB-YxHGKTc66kzylrKPakZ1YdCochM8GYaYovJRARu5Z5KLywWkpxDvPNf5Kgr-qWEg9kbnqy0')"
+          ></div>
+        </div>
+
+        <!-- Tip 3 -->
+        <div class="flex flex-col sm:flex-row gap-4">
+          <div class="flex-1">
+            <p class="text-sm text-[#638863]">Eco-Friendly Diet</p>
+            <p class="text-base font-bold text-[#111811]">Eat Less Meat</p>
+            <p class="text-sm text-[#638863]">Reducing your meat consumption, especially beef, can significantly lower your carbon footprint.</p>
+          </div>
+          <div
+            class="w-full sm:w-1/2 aspect-video rounded-xl bg-center bg-cover"
+            style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuC2KKxI0FeXJTS1J-Ml-BHpY43aw5AJVa6kjWC3diqNPhJUCT8qOgphn1OX8kcoUKCVkLshM2VCz7LrQY2VWlHG3gDVSoCvNEnPjhDFLhZ7OeKq8fUn8gnUSmbGOGMKQ7EtI3MeSxc5-5NUhIvBzEcZcMSXeGR4NB5yOmDR6oYcPgUPk5s1L-ObhdgIkJYP9c9jwEkNJtL5BD35jvtBIkJHr1kZC7JBTOw6h-XOrmF-suUV5yJU9npApRaNq9omjiNMDmArvAhUbgc')"
+          ></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bg-white border-t border-[#f0f4f0] px-4 py-2 flex justify-around">
+      <a href="#" class="flex flex-col items-center text-[#111811]">
+        <svg width="24" height="24" fill="currentColor"><path d="..."></path></svg>
+        <span class="text-xs font-medium">Home</span>
+      </a>
+      <a href="#" class="flex flex-col items-center text-[#638863]">
+        <svg width="24" height="24" fill="currentColor"><path d="..."></path></svg>
+        <span class="text-xs font-medium">Track</span>
+      </a>
+      <a href="#" class="flex flex-col items-center text-[#638863]">
+        <svg width="24" height="24" fill="currentColor"><path d="..."></path></svg>
+        <span class="text-xs font-medium">Community</span>
+      </a>
+      <a href="#" class="flex flex-col items-center text-[#638863]">
+        <svg width="24" height="24" fill="currentColor"><path d="..."></path></svg>
+        <span class="text-xs font-medium">Profile</span>
+      </a>
+    </nav>
+  </div>
+</body>
+</html>
