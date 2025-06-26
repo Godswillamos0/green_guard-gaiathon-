@@ -15,7 +15,7 @@ app.include_router(esp32.router)
 
 
 @app.get('/ping')
-async def send_data(db: db_dependency, data: DataRequest, request:Request):
+async def send_data():
     return {
       "status":"ping"
     }
