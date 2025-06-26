@@ -149,9 +149,22 @@
   }
 
   function getLabelText(rating) {
-    if (rating <= 2) return "Bad";
-    if (rating === 3) return "Mid";
-    return "Good";
+    if (rating === 5) return "Excellent";
+    if (rating === 4) return "Good";
+    if (rating === 3) return "Moderate";
+    if (rating === 2) return "Poor";
+    return "Dangerous";
+  }
+
+  function mapStatusToRating(status) {
+    switch (status.toLowerCase()) {
+      case "excellent": return 5;
+      case "good": return 4;
+      case "moderate": return 3;
+      case "poor": return 2;
+      case "dangerous": return 1;
+      default: return 3;
+    }
   }
 
   const ctx = document.getElementById("gauge").getContext("2d");
@@ -176,12 +189,16 @@
   });
 
   async function fetchRating() {
-    // Replace with your real endpoint
-    // const res = await fetch("/api/air-quality");
-    // const { rating } = await res.json();
-
-    const rating = Math.floor(Math.random() * 5) + 1; // simulate 1–5
-    return rating;
+    try {
+      const res = await fetch("https://green-guard-gaiathon.onrender.com/meter/live");
+      if (!res.ok) throw new Error("Failed to fetch data");
+      const data = await res.json();
+      const status = data.status;
+      return mapStatusToRating(status);
+    } catch (error) {
+      console.error("Error fetching rating:", error);
+      return 3; // fallback to 'Moderate'
+    }
   }
 
   async function updateGauge() {
@@ -202,4 +219,5 @@
   updateGauge();
   setInterval(updateGauge, 5000);
 </script>
+
 </html>
