@@ -25,7 +25,9 @@ class Datas(Base):
     __tablename__='datas'
     
     id=Column(Integer, primary_key=True, index=True)
-    carbon_index=Column(String)
+    carbon_index1:int = Field(default=None)
+    carbon_index2:int = Field(default=None)
+    status:str 
     time_stamp=Column(DateTime)
     device_id=Column(Integer, ForeignKey("meters.id"))
     
