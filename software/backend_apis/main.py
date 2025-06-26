@@ -14,7 +14,7 @@ app.include_router(users.router)
 app.include_router(esp32.router)
 
 
-@app.get('/ping', status_code=status.HTTP_201_CREATED)
+@app.get('/ping')
 async def send_data(db: db_dependency, data: DataRequest, request:Request):
     return {
       "status":"ping"
