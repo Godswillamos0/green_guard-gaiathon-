@@ -21,7 +21,9 @@ def get_db():
         db.close()
 
 class DataRequest(BaseModel):
-    carbon_index:float = Field(default=None)
+    carbon_index1:int = Field(default=None)
+    carbon_index2:int = Field(default=None)
+    status:str 
     time_stamp: datetime
 
     class Config:
