@@ -55,5 +55,7 @@ async def send_data(db: db_dependency, data: DataRequest, request:Request):
     body = await request.json()
     print("Received body:", body)
     
-    return data
+    return {
+        "status":"sent"
+    }
 
