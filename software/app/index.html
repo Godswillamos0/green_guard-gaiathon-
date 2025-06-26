@@ -3,13 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stitch Design - Responsive</title>
+  <title>Green Guard - main app</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900"
     rel="stylesheet"
   />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <style>
+    .gauge-container {
+      position: relative;
+      width: 300px;
+      margin: auto;
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    #gauge {
+      width: 100%;
+      height: auto;
+    }
+
+    .gauge-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -40%);
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body class="bg-white font-['Inter','Noto_Sans',sans-serif]">
   <div class="flex flex-col min-h-screen justify-between overflow-x-hidden">
@@ -26,6 +53,11 @@
 
     <!-- Content Container -->
     <main class="flex-1 overflow-auto px-4 sm:px-6 py-4 max-w-xl mx-auto">
+    <!-- Meter Section -->
+    <div class="gauge-container">
+        <canvas id="gauge" width="300" height="300"></canvas>
+        <div class="gauge-label" id="gauge-label">Loading...</div>
+    </div>
       <!-- Progress Section -->
       <section class="mb-6">
         <div class="flex justify-between items-center">
@@ -105,4 +137,69 @@
     </nav>
   </div>
 </body>
+<script>
+  function getPercentageFromRating(rating) {
+    return (rating / 5) * 100;
+  }
+
+  function getColor(rating) {
+    if (rating <= 2) return "#e53935";      // Red
+    if (rating === 3) return "#fbc02d";     // Yellow
+    return "#43a047";                       // Green
+  }
+
+  function getLabelText(rating) {
+    if (rating <= 2) return "Bad";
+    if (rating === 3) return "Mid";
+    return "Good";
+  }
+
+  const ctx = document.getElementById("gauge").getContext("2d");
+  let gaugeChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [0, 100],
+        backgroundColor: ['#ccc', '#eee'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      circumference: 180,
+      rotation: -90,
+      cutout: '70%',
+      plugins: {
+        tooltip: false,
+        legend: { display: false }
+      }
+    }
+  });
+
+  async function fetchRating() {
+    // Replace with your real endpoint
+    // const res = await fetch("/api/air-quality");
+    // const { rating } = await res.json();
+
+    const rating = Math.floor(Math.random() * 5) + 1; // simulate 1–5
+    return rating;
+  }
+
+  async function updateGauge() {
+    const rating = await fetchRating();
+    const percentage = getPercentageFromRating(rating);
+    const color = getColor(rating);
+    const label = getLabelText(rating);
+
+    gaugeChart.data.datasets[0].data = [percentage, 100 - percentage];
+    gaugeChart.data.datasets[0].backgroundColor = [color, '#eee'];
+    gaugeChart.update();
+
+    document.getElementById("gauge-label").textContent = label;
+
+    console.log(`Rating: ${rating}, Label: ${label}`);
+  }
+
+  updateGauge();
+  setInterval(updateGauge, 5000);
+</script>
 </html>
