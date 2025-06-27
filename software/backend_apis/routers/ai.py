@@ -55,25 +55,30 @@ Current:
 
 Insight:
 """
-  headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
-        "Content-Type": "application/json"
-    }
+  talk(prompt)
 
-  body = {
-        "model": GROQ_MODEL,
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0.7,
-        "max_tokens": 100
-    }
+def talk(Question):
+  client = Groq(api_key = GROQ_API_KEY)
+  completion = client.chat.completions.create(
+        model="llama3-70b-8192",
+        messages=[
+            {
+                "role": "user",
+                "content": Question
+            }
+        ],
+        temperature=1,
+        max_tokens=100,
+        top_p=1,
+        stream=True,
+        stop=None,
+    )
 
-  async with httpx.AsyncClient() as client:
-        response = await client.post(GROQ_API_URL, json=body, headers=headers)
-
-  if response.status_code == 200:
-        ai_message = response.json()["choices"][0]["message"]["content"]
-        return {"suggestion": ai_message.strip()}
-  else:
-      print(response.status_code)  
-      return {"suggestion": "Unable to generate insight right now."}
-
+  # see this part? just take it like that 
+  all_words =[]
+  for chunk in completion:
+      all_words.append((chunk.choices[0].delta.content or ""))
+  sentence = ''
+  for word in all_words:
+    sentence = sentence + word 
+  return sentence
