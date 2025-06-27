@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from database import SessionLocal
 from models import Users
 from passlib.context import CryptContext
+import os
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 
 router = APIRouter(
@@ -15,7 +16,7 @@ router = APIRouter(
     tags=['auth']
 )
 
-SECRET_KEY = 'a346e558928942d326ffeb3378d0f9f43708cc82f787e89a12ff7561c5b16f63'
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = 'HS256'
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
