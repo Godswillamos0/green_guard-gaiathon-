@@ -74,5 +74,6 @@ Insight:
         ai_message = response.json()["choices"][0]["message"]["content"]
         return {"suggestion": ai_message.strip()}
   else:
-        return {"suggestion": "Unable to generate insight right now."}
+      print(response.status_code)  
+      return {"suggestion": "Unable to generate insight right now."}
 
