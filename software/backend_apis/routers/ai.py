@@ -41,13 +41,14 @@ Past Data:
 {datas}
 
 Current:
-- CO₂ Level (MQ-135): {ld['carbon_index1']}
-- Gas Level (MQ-2): {ld['carbon_index2']}
-- Status: {ld['status']}
-- Time: {ld['time_stamp']}
+- CO₂ Level (MQ-135): {ld.carbon_index1}
+- Gas Level (MQ-2): {ld.carbon_index2}
+- Status: {ld.status}
+- Time: {ld.time_stamp}
 
 Insight:
 """
+
         insight = talk(prompt)
         return {"insight": insight}
     except Exception as e:
