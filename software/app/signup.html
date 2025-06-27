@@ -28,30 +28,46 @@
         </div>
 
         <!-- Form Fields -->
-        <form class="space-y-4 max-w-md w-full mx-auto mt-4">
-          <input
-            type="text"
-            placeholder="Full name"
-            class="w-full h-14 rounded-xl bg-[#f0f4f0] p-4 placeholder:text-[#638863] text-[#111811] text-base focus:outline-none"
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            class="w-full h-14 rounded-xl bg-[#f0f4f0] p-4 placeholder:text-[#638863] text-[#111811] text-base focus:outline-none"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            class="w-full h-14 rounded-xl bg-[#f0f4f0] p-4 placeholder:text-[#638863] text-[#111811] text-base focus:outline-none"
-          />
+        <form id="signup-form" class="space-y-4 max-w-md w-full mx-auto mt-4">
+  <input
+    id="first_name"
+    type="text"
+    placeholder="First name"
+    class="w-full h-14 rounded-xl bg-[#f0f4f0] p-4 placeholder:text-[#638863]"
+  />
+  <input
+    id="last_name"
+    type="text"
+    placeholder="Last name"
+    class="w-full h-14 rounded-xl bg-[#f0f4f0] p-4 placeholder:text-[#638863]"
+  />
+  <input
+    id="email"
+    type="email"
+    placeholder="Email"
+    class="w-full h-14 rounded-xl bg-[#f0f4f0] p-4 placeholder:text-[#638863]"
+  />
+  <input
+    id="username"
+    type="text"
+    placeholder="Username"
+    class="w-full h-14 rounded-xl bg-[#f0f4f0] p-4 placeholder:text-[#638863]"
+  />
+  <input
+    id="password"
+    type="password"
+    placeholder="Password"
+    class="w-full h-14 rounded-xl bg-[#f0f4f0] p-4 placeholder:text-[#638863]"
+  />
 
-          <button
-            type="submit"
-            class="w-full h-12 rounded-xl bg-[#19e519] text-[#111811] font-bold text-base hover:bg-[#17cb17] transition"
-          >
-            Sign up
-          </button>
-        </form>
+  <button
+    type="submit"
+    class="w-full h-12 rounded-xl bg-[#19e519] text-[#111811] font-bold text-base hover:bg-[#17cb17] transition"
+  >
+    Sign up
+  </button>
+</form>
+
       </div>
 
       <!-- Footer -->
@@ -60,4 +76,41 @@
       </div>
     </div>
   </body>
+  <script>
+  const signupForm = document.getElementById("signup-form");
+
+  signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const newUser = {
+      first_name: document.getElementById("first_name").value,
+      last_name: document.getElementById("last_name").value,
+      email: document.getElementById("email").value,
+      username: document.getElementById("username").value,
+      password: document.getElementById("password").value,
+    };
+
+    try {
+      const res = await fetch("https://green-guard-gaiathon.onrender.com/auth/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newUser),
+      });
+
+      if (!res.ok) {
+        const error = await res.text();
+        throw new Error("Signup failed: " + error);
+      }
+
+      alert("Signup successful! Redirecting to login...");
+      window.location.href = "login.html";
+    } catch (err) {
+      console.error("Signup error:", err);
+      alert("Signup failed. Please try again.");
+    }
+  });
+</script>
+
 </html>
