@@ -5,6 +5,7 @@ from datetime import datetime
 from .esp32 import get_latest_data
 import httpx
 import os
+from groq import Groq
 
 from database import SessionLocal
 from sqlalchemy.orm import Session
