@@ -3,81 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Green Guard - main app</title>
-  <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#43a047">
-
+  <title>GreenGuard - Carbon Tracker</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#43a047" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900"
-    rel="stylesheet"
-  />
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
-    .gauge-container {
-      position: relative;
-      width: 300px;
-      margin: auto;
-      font-family: sans-serif;
-      text-align: center;
-      margin-top: 50px;
+    body {
+      font-family: 'Inter', sans-serif;
     }
-
-    #gauge {
-      width: 100%;
-      height: auto;
-    }
-
     .gauge-label {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -40%);
-      font-size: 24px;
-      font-weight: bold;
-      color: #333;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #111811;
       pointer-events: none;
     }
   </style>
 </head>
-<body class="bg-white font-['Inter','Noto_Sans',sans-serif]">
-  <div class="flex flex-col min-h-screen justify-between overflow-x-hidden">
-    <!-- Header -->
-    <header class="flex items-center justify-between px-4 py-2 sm:px-6 bg-white">
-      <h2 class="text-lg font-bold text-[#111811]">My Footprint</h2>
-      <button class="w-10 h-10 flex items-center justify-center">
-        <!-- gear icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor">
-          <path d="..."></path>
-        </svg>
-      </button>
-    </header>
+<body class="bg-white min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="flex items-center justify-between px-4 py-3 bg-white shadow-sm">
+    <h1 class="text-xl font-bold text-[#111811]">🌿 GreenGuard</h1>
+    <button class="w-9 h-9 rounded-full bg-[#f0f4f0] flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#111811]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+      </svg>
+    </button>
+  </header>
 
-    <!-- Content Container -->
-    <main class="flex-1 overflow-auto px-4 sm:px-6 py-4 max-w-xl mx-auto">
-    <!-- Meter Section -->
-    <div class="gauge-container">
-        <canvas id="gauge" width="300" height="300"></canvas>
-        <div class="gauge-label" id="gauge-label">Loading...</div>
+  <!-- Main -->
+  <main class="flex-1 overflow-auto p-4 max-w-3xl w-full mx-auto">
+    <!-- Gauge Chart -->
+    <div class="relative w-full max-w-xs mx-auto mt-6">
+      <canvas id="gauge" width="300" height="300"></canvas>
+      <div id="gauge-label" class="gauge-label">Loading...</div>
     </div>
-      <!-- Progress Section -->
-      <section class="mb-6">
-        <div class="flex justify-between items-center">
-          <p class="font-medium text-[#111811]">Your Carbon Footprint</p>
-          <p class="text-sm text-[#111811]">60%</p>
-        </div>
-        <div class="mt-2 rounded bg-[#dce5dc] h-2 w-full">
-          <div class="h-2 rounded bg-[#111811]" style="width: 60%;"></div>
-        </div>
-        <p class="mt-1 text-sm text-[#638863]">Compared to last month</p>
-      </section>
 
-      <!-- Live Readings -->
+    <!-- CO₂ Progress -->
+    <section class="mt-8 mb-6">
+      <div class="flex justify-between items-center">
+        <p class="font-medium text-[#111811]">Your Carbon Footprint</p>
+        <p class="text-sm text-[#111811]" id="footprint-percentage">60%</p>
+      </div>
+      <div class="mt-2 h-2 bg-[#dce5dc] rounded">
+        <div class="h-full bg-[#43a047] rounded" style="width: 60%;"></div>
+      </div>
+      <p class="text-xs text-[#638863] mt-1">Compared to last month</p>
+    </section>
+
+    <!-- Live Sensor Data -->
     <div class="grid grid-cols-2 gap-4 text-sm text-gray-700 mb-6">
       <div>CO₂ (MQ-135): <span id="co2-value">--</span> ppm</div>
       <div>Gas (MQ-2): <span id="gas-value">--</span></div>
-      <div colspan="2">Last update: <span id="last-update">--</span></div>
+      <div class="col-span-2">Last update: <span id="last-update">--</span></div>
     </div>
 
     <!-- Eco Score -->
@@ -87,20 +70,90 @@
       <p class="text-sm text-[#638863]">Lower emissions = higher score</p>
     </div>
 
-    <!-- AI Insight Section -->
-<div class="mb-6 p-4 bg-[#e8f5e9] rounded-lg shadow">
-  <h3 class="text-lg font-bold text-[#111811] mb-2">GreenGuard Insight</h3>
-  <p id="ai-insight" class="text-sm text-[#2e7d32] italic">Fetching insight...</p>
-</div>
+    <!-- AI Insight -->
+    <section class="mb-6 bg-[#e8f5e9] border-l-4 border-[#43a047] p-4 rounded-lg shadow-sm">
+      <h3 class="text-lg font-semibold text-[#111811] mb-1">🌱 GreenGuard AI Insight</h3>
+      <p id="ai-insight" class="text-sm text-[#2e7d32] italic">Loading environmental advice...</p>
+    </section>
 
-
-
-    <!-- Carbon History Line Chart -->
+    <!-- Carbon History -->
     <h3 class="text-lg font-bold text-[#111811] mb-2">Carbon History</h3>
     <canvas id="history-chart" height="200"></canvas>
-  </div>
+
+    <!-- Tips -->
+    <section class="mt-10 space-y-6">
+      <h3 class="text-xl font-bold text-[#111811]">🌍 Tips for a Greener Life</h3>
+      <div class="grid sm:grid-cols-2 gap-6">
+        <!-- Tip Card -->
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvhFkzDA8HhdwU..." class="w-full h-32 object-cover" />
+          <div class="p-4">
+            <p class="text-xs text-[#638863] uppercase">Energy</p>
+            <h4 class="text-md font-semibold text-[#111811]">Switch to LED Lighting</h4>
+            <p class="text-sm text-[#638863]">LEDs save 75% more energy and last longer.</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuFklarYlLo7NP..." class="w-full h-32 object-cover" />
+          <div class="p-4">
+            <p class="text-xs text-[#638863] uppercase">Transport</p>
+            <h4 class="text-md font-semibold text-[#111811]">Walk or Bike More</h4>
+            <p class="text-sm text-[#638863]">Eco-friendly and healthier for you.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bg-white border-t border-[#f0f4f0] px-4 py-2 flex justify-around">
+    <a href="#" class="flex flex-col items-center text-[#111811]">
+      <svg width="24" height="24" fill="currentColor"><path d="..." /></svg>
+      <span class="text-xs font-medium">Home</span>
+    </a>
+    <a href="#" class="flex flex-col items-center text-[#638863]">
+      <svg width="24" height="24" fill="currentColor"><path d="..." /></svg>
+      <span class="text-xs font-medium">Track</span>
+    </a>
+    <a href="#" class="flex flex-col items-center text-[#638863]">
+      <svg width="24" height="24" fill="currentColor"><path d="..." /></svg>
+      <span class="text-xs font-medium">Tips</span>
+    </a>
+    <a href="#" class="flex flex-col items-center text-[#638863]">
+      <svg width="24" height="24" fill="currentColor"><path d="..." /></svg>
+      <span class="text-xs font-medium">Profile</span>
+    </a>
+  </nav>
 
   <script>
+    const gaugeCtx = document.getElementById("gauge").getContext("2d");
+    const gaugeChart = new Chart(gaugeCtx, {
+      type: "doughnut",
+      data: { datasets: [{ data: [0, 100], backgroundColor: ["#ccc", "#eee"], borderWidth: 0 }] },
+      options: {
+        circumference: 180,
+        rotation: -90,
+        cutout: "70%",
+        plugins: { tooltip: false, legend: { display: false } }
+      }
+    });
+
+    const historyCtx = document.getElementById("history-chart").getContext("2d");
+    const historyChart = new Chart(historyCtx, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [
+          { label: "MQ-135 (CO₂)", borderColor: "#43a047", backgroundColor: "rgba(67, 160, 71, 0.1)", data: [], tension: 0.4 },
+          { label: "MQ-2 (Gas)", borderColor: "#fbc02d", backgroundColor: "rgba(251, 192, 45, 0.1)", data: [], tension: 0.4 },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: { x: { ticks: { autoSkip: true, maxTicksLimit: 6 } }, y: { beginAtZero: true, suggestedMax: 1400 } },
+      },
+    });
+
     function mapStatusToRating(status) {
       switch (status.toLowerCase()) {
         case "excellent": return 5;
@@ -117,9 +170,9 @@
     }
 
     function getColor(rating) {
-      if (rating <= 2) return "#e53935"; // Red
-      if (rating === 3) return "#fbc02d"; // Yellow
-      return "#43a047"; // Green
+      if (rating <= 2) return "#e53935";
+      if (rating === 3) return "#fbc02d";
+      return "#43a047";
     }
 
     function getLabelText(rating) {
@@ -131,303 +184,71 @@
     }
 
     function calculateEcoScore(status) {
-      const statusToScore = {
-        "Excellent": 100,
-        "Good": 85,
-        "Moderate": 65,
-        "Poor": 40,
-        "Dangerous": 20,
-      };
-      return statusToScore[status] || 50;
+      const map = { Excellent: 100, Good: 85, Moderate: 65, Poor: 40, Dangerous: 20 };
+      return map[status] || 50;
     }
-
-    // Gauge Chart
-    const gaugeCtx = document.getElementById("gauge").getContext("2d");
-    const gaugeChart = new Chart(gaugeCtx, {
-      type: "doughnut",
-      data: {
-        datasets: [{
-          data: [0, 100],
-          backgroundColor: ["#ccc", "#eee"],
-          borderWidth: 0,
-        }],
-      },
-      options: {
-        circumference: 180,
-        rotation: -90,
-        cutout: "70%",
-        plugins: { tooltip: false, legend: { display: false } },
-      },
-    });
-
-    // History Chart
-    const historyCtx = document.getElementById("history-chart").getContext("2d");
-    const historyChart = new Chart(historyCtx, {
-      type: "line",
-      data: {
-        labels: [],
-        datasets: [
-          {
-            label: "MQ-135 (CO₂)",
-            borderColor: "#43a047",
-            backgroundColor: "rgba(67, 160, 71, 0.1)",
-            data: [],
-            tension: 0.4,
-          },
-          {
-            label: "MQ-2 (Gas)",
-            borderColor: "#fbc02d",
-            backgroundColor: "rgba(251, 192, 45, 0.1)",
-            data: [],
-            tension: 0.4,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: {
-            ticks: { autoSkip: true, maxTicksLimit: 6 },
-          },
-          y: {
-            beginAtZero: true,
-            suggestedMax: 1400,
-          },
-        },
-      },
-    });
 
     function updateHistoryChart(co2, gas, timeStamp) {
       const label = new Date(timeStamp).toLocaleTimeString();
-
       if (historyChart.data.labels.length >= 20) {
         historyChart.data.labels.shift();
         historyChart.data.datasets[0].data.shift();
         historyChart.data.datasets[1].data.shift();
       }
-
       historyChart.data.labels.push(label);
       historyChart.data.datasets[0].data.push(co2);
       historyChart.data.datasets[1].data.push(gas);
       historyChart.update();
     }
 
-    function updateEcoScore(status) {
-      const score = calculateEcoScore(status);
-      document.getElementById("eco-score").textContent = score;
-    }
-
     async function updateDashboard() {
       try {
         const res = await fetch("https://green-guard-gaiathon.onrender.com/meter/live");
-        const data = await res.json();
-
-        const { carbon_index1, carbon_index2, time_stamp, status } = data;
+        const { carbon_index1, carbon_index2, time_stamp, status } = await res.json();
         const rating = mapStatusToRating(status);
         const percentage = getPercentageFromRating(rating);
         const color = getColor(rating);
         const label = getLabelText(rating);
 
-        // Gauge
         gaugeChart.data.datasets[0].data = [percentage, 100 - percentage];
         gaugeChart.data.datasets[0].backgroundColor = [color, "#eee"];
         gaugeChart.update();
         document.getElementById("gauge-label").textContent = label;
 
-        // History Chart & Live Readings
         updateHistoryChart(carbon_index1, carbon_index2, time_stamp);
         document.getElementById("co2-value").textContent = carbon_index1;
         document.getElementById("gas-value").textContent = carbon_index2;
         document.getElementById("last-update").textContent = new Date(time_stamp).toLocaleTimeString();
-
-        // Eco Score
-        updateEcoScore(status);
-
+        document.getElementById("eco-score").textContent = calculateEcoScore(status);
+        document.getElementById("footprint-percentage").textContent = `${percentage.toFixed(0)}%`;
       } catch (err) {
         console.error("Dashboard update failed:", err);
       }
     }
 
     async function fetchAIInsight() {
-    try {
-      const res = await fetch("https://green-guard-gaiathon.onrender.com/ai/insight", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        }
-      });
-
-      const data = await res.json();
-      document.getElementById("ai-insight").textContent = data.suggestion || "No insight available yet.";
-    } catch (err) {
-      console.error("Failed to fetch AI insight:", err);
-      document.getElementById("ai-insight").textContent = "Unable to load insight.";
-    }
-  }
-
-  fetchAIInsight();
-  setInterval(fetchAIInsight, 15000); // refresh every 15 seconds
-    updateDashboard();
-    setInterval(updateDashboard, 5000);
-  </script>
-
-      <!-- Tips Header -->
-      <h3 class="text-[22px] font-bold text-[#111811] mb-4">Tips for a Greener Life</h3>
-
-      <!-- Tip Cards: stack vertically on mobile -->
-      <div class="space-y-6">
-        <!-- Tip 1 -->
-        <div class="flex flex-col sm:flex-row gap-4">
-          <div class="flex-1">
-            <p class="text-sm text-[#638863]">Reduce Energy Consumption</p>
-            <p class="text-base font-bold text-[#111811]">Switch to LED Lighting</p>
-            <p class="text-sm text-[#638863]">LED bulbs use up to 75% less energy and last longer than incandescent bulbs.</p>
-          </div>
-          <div
-            class="w-full sm:w-1/2 aspect-video rounded-xl bg-center bg-cover"
-            style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuCvhFkzDA8HhdwU-tHYFuTM407GyzsUX3Pfm0ywsGEUZT02sI_unDBcNEh-DnX63iaTrskCF33fWqYP5Dht5QDspa45HR_KPugqVP4FZEBESKBAjtDASbPHzS-u7OLknF9OhTe7JItRF6c1EuLEC4KeculHAjSRLErmts7qgi_rDcS5v0YG8bpMMOiTJRupv4b69LoK4_lvJsANJfY-PYd1anRMAxuR-_ynpUPAH2fux1HequDVJTyGSvNDRd_b5uNRoA-5Wr9ateQ')"
-          ></div>
-        </div>
-
-        <!-- Tip 2 -->
-        <div class="flex flex-col sm:flex-row gap-4">
-          <div class="flex-1">
-            <p class="text-sm text-[#638863]">Sustainable Transportation</p>
-            <p class="text-base font-bold text-[#111811]">Bike or Walk for Short Trips</p>
-            <p class="text-sm text-[#638863]">Choosing to bike or walk instead of driving reduces your carbon emissions and improves your health.</p>
-          </div>
-          <div
-            class="w-full sm:w-1/2 aspect-video rounded-xl bg-center bg-cover"
-            style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuAuFklarYlLo7NPpWvAf7ni6h1s2eNOrfdaJKW_HRLxM_daIcxySTyxf8DT_N_7HnvL1o3jqYflE95svNNex1iIgfRBamEHdiy2IqnPwjFvm77S6tyg7nba_gCWD2gXT3mQviEaeg9L8XXd8NP1SBiziyhx-SRMFUHNrIrVFOYh2mF-zwKygLel1mJr_8RiJOY7ChB-YxHGKTc66kzylrKPakZ1YdCochM8GYaYovJRARu5Z5KLywWkpxDvPNf5Kgr-qWEg9kbnqy0')"
-          ></div>
-        </div>
-
-        <!-- Tip 3 -->
-        <div class="flex flex-col sm:flex-row gap-4">
-          <div class="flex-1">
-            <p class="text-sm text-[#638863]">Eco-Friendly Diet</p>
-            <p class="text-base font-bold text-[#111811]">Eat Less Meat</p>
-            <p class="text-sm text-[#638863]">Reducing your meat consumption, especially beef, can significantly lower your carbon footprint.</p>
-          </div>
-          <div
-            class="w-full sm:w-1/2 aspect-video rounded-xl bg-center bg-cover"
-            style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuC2KKxI0FeXJTS1J-Ml-BHpY43aw5AJVa6kjWC3diqNPhJUCT8qOgphn1OX8kcoUKCVkLshM2VCz7LrQY2VWlHG3gDVSoCvNEnPjhDFLhZ7OeKq8fUn8gnUSmbGOGMKQ7EtI3MeSxc5-5NUhIvBzEcZcMSXeGR4NB5yOmDR6oYcPgUPk5s1L-ObhdgIkJYP9c9jwEkNJtL5BD35jvtBIkJHr1kZC7JBTOw6h-XOrmF-suUV5yJU9npApRaNq9omjiNMDmArvAhUbgc')"
-          ></div>
-        </div>
-      </div>
-    </main>
-
-    <!-- Bottom Navigation -->
-    <nav class="bg-white border-t border-[#f0f4f0] px-4 py-2 flex justify-around">
-      <a href="#" class="flex flex-col items-center text-[#111811]">
-        <svg width="24" height="24" fill="currentColor"><path d="..."></path></svg>
-        <span class="text-xs font-medium">Home</span>
-      </a>
-      <a href="#" class="flex flex-col items-center text-[#638863]">
-        <svg width="24" height="24" fill="currentColor"><path d="..."></path></svg>
-        <span class="text-xs font-medium">Track</span>
-      </a>
-      <a href="#" class="flex flex-col items-center text-[#638863]">
-        <svg width="24" height="24" fill="currentColor"><path d="..."></path></svg>
-        <span class="text-xs font-medium">Community</span>
-      </a>
-      <a href="#" class="flex flex-col items-center text-[#638863]">
-        <svg width="24" height="24" fill="currentColor"><path d="..."></path></svg>
-        <span class="text-xs font-medium">Profile</span>
-      </a>
-    </nav>
-  </div>
-</body>
-<script>
-  function getPercentageFromRating(rating) {
-    return (rating / 5) * 100;
-  }
-
-  function getColor(rating) {
-    if (rating <= 2) return "#e53935";      // Red
-    if (rating === 3) return "#fbc02d";     // Yellow
-    return "#43a047";                       // Green
-  }
-
-  function getLabelText(rating) {
-    if (rating === 5) return "Excellent";
-    if (rating === 4) return "Good";
-    if (rating === 3) return "Moderate";
-    if (rating === 2) return "Poor";
-    return "Dangerous";
-  }
-
-  function mapStatusToRating(status) {
-    switch (status.toLowerCase()) {
-      case "excellent": return 5;
-      case "good": return 4;
-      case "moderate": return 3;
-      case "poor": return 2;
-      case "dangerous": return 1;
-      default: return 3;
-    }
-  }
-
-  const ctx = document.getElementById("gauge").getContext("2d");
-  let gaugeChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      datasets: [{
-        data: [0, 100],
-        backgroundColor: ['#ccc', '#eee'],
-        borderWidth: 0
-      }]
-    },
-    options: {
-      circumference: 180,
-      rotation: -90,
-      cutout: '70%',
-      plugins: {
-        tooltip: false,
-        legend: { display: false }
+      try {
+        const res = await fetch("https://green-guard-gaiathon.onrender.com/ai/insight", { method: "POST" });
+        const data = await res.json();
+        document.getElementById("ai-insight").textContent = data.suggestion || "No insight available.";
+      } catch (err) {
+        console.error("AI Insight error:", err);
+        document.getElementById("ai-insight").textContent = "Unable to load insight.";
       }
     }
-  });
 
-  async function fetchRating() {
-    try {
-      const res = await fetch("https://green-guard-gaiathon.onrender.com/meter/live");
-      if (!res.ok) throw new Error("Failed to fetch data");
-      const data = await res.json();
-      const status = data.status;
-      return mapStatusToRating(status);
-    } catch (error) {
-      console.error("Error fetching rating:", error);
-      return 3; // fallback to 'Moderate'
+    updateDashboard();
+    fetchAIInsight();
+    setInterval(updateDashboard, 5000);
+    setInterval(fetchAIInsight, 15000);
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/service-worker.js")
+          .then(reg => console.log("Service Worker registered:", reg))
+          .catch(err => console.error("Service Worker registration failed:", err));
+      });
     }
-  }
-
-  async function updateGauge() {
-    const rating = await fetchRating();
-    const percentage = getPercentageFromRating(rating);
-    const color = getColor(rating);
-    const label = getLabelText(rating);
-
-    gaugeChart.data.datasets[0].data = [percentage, 100 - percentage];
-    gaugeChart.data.datasets[0].backgroundColor = [color, '#eee'];
-    gaugeChart.update();
-
-    document.getElementById("gauge-label").textContent = label;
-
-    console.log(`Rating: ${rating}, Label: ${label}`);
-  }
-
-  updateGauge();
-  setInterval(updateGauge, 5000);
-
-  if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/service-worker.js")
-      .then(reg => console.log("Service Worker registered:", reg))
-      .catch(err => console.error("Service Worker registration failed:", err));
-  });
-}
-
-</script>
-
+  </script>
+</body>
 </html>
