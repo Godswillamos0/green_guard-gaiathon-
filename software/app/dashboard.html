@@ -236,7 +236,7 @@
       });
 
       const data = await res.json();
-      document.getElementById("ai-insight").textContent = data.suggestion || "No insight available yet.";
+      document.getElementById("ai-insight").textContent = data.insight || "No insight available yet.";
     } catch (err) {
       console.error("Failed to fetch AI insight:", err);
       document.getElementById("ai-insight").textContent = "Unable to load insight.";
