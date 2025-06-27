@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI
 import models
 from routers import auth, admin, meter, users, esp32
@@ -22,6 +23,7 @@ app.include_router(auth.router)
 app.include_router(meter.router)
 app.include_router(users.router)
 app.include_router(esp32.router)
+app.include_router(ai.router)
 
 
 @app.get('/ping')
