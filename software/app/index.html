@@ -227,15 +227,21 @@
     }
 
     async function fetchAIInsight() {
-      try {
-        const res = await fetch("https://green-guard-gaiathon.onrender.com/ai/insight", { method: "POST" });
-        const data = await res.json();
-        document.getElementById("ai-insight").textContent = data.suggestion || "No insight available.";
-      } catch (err) {
-        console.error("AI Insight error:", err);
-        document.getElementById("ai-insight").textContent = "Unable to load insight.";
-      }
+    try {
+      const res = await fetch("https://green-guard-gaiathon.onrender.com/ai/insight", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      const data = await res.json();
+      document.getElementById("ai-insight").textContent = data.suggestion || "No insight available yet.";
+    } catch (err) {
+      console.error("Failed to fetch AI insight:", err);
+      document.getElementById("ai-insight").textContent = "Unable to load insight.";
     }
+  }
 
     updateDashboard();
     fetchAIInsight();
