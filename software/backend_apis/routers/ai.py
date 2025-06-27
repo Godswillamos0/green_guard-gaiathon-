@@ -55,25 +55,24 @@ Current:
 
 Insight:
 """
-
-    headers = {
+  headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json"
     }
 
-    body = {
+  body = {
         "model": GROQ_MODEL,
         "messages": [{"role": "user", "content": prompt}],
         "temperature": 0.7,
         "max_tokens": 100
     }
 
-    async with httpx.AsyncClient() as client:
+  async with httpx.AsyncClient() as client:
         response = await client.post(GROQ_API_URL, json=body, headers=headers)
 
-    if response.status_code == 200:
+  if response.status_code == 200:
         ai_message = response.json()["choices"][0]["message"]["content"]
         return {"suggestion": ai_message.strip()}
-    else:
+  else:
         return {"suggestion": "Unable to generate insight right now."}
 
