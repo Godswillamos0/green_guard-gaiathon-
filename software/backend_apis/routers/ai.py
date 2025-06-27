@@ -35,7 +35,7 @@ GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_MODEL = "llama3-70b-8192"
 
 
-@app.post("/ai/insight")
+@router.post("/insight")
 async def generate_insight(db:db_dependency, ld:live_data_dependency):
   datas = db.query(Datas).all  
   
