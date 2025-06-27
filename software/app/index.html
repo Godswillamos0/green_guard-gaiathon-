@@ -73,6 +73,204 @@
         <p class="mt-1 text-sm text-[#638863]">Compared to last month</p>
       </section>
 
+      <!-- Live Readings -->
+    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700 mb-6">
+      <div>CO₂ (MQ-135): <span id="co2-value">--</span> ppm</div>
+      <div>Gas (MQ-2): <span id="gas-value">--</span></div>
+      <div colspan="2">Last update: <span id="last-update">--</span></div>
+    </div>
+
+    <!-- Eco Score -->
+    <div class="mb-6 p-4 bg-[#f0f4f0] rounded-lg shadow text-center">
+      <h3 class="text-lg font-bold text-[#111811]">Eco Score</h3>
+      <p class="text-3xl font-bold text-[#43a047]" id="eco-score">--</p>
+      <p class="text-sm text-[#638863]">Lower emissions = higher score</p>
+    </div>
+
+    <!-- AI Insight Section -->
+<div class="mb-6 p-4 bg-[#e8f5e9] rounded-lg shadow">
+  <h3 class="text-lg font-bold text-[#111811] mb-2">GreenGuard Insight</h3>
+  <p id="ai-insight" class="text-sm text-[#2e7d32] italic">Fetching insight...</p>
+</div>
+
+
+
+    <!-- Carbon History Line Chart -->
+    <h3 class="text-lg font-bold text-[#111811] mb-2">Carbon History</h3>
+    <canvas id="history-chart" height="200"></canvas>
+  </div>
+
+  <script>
+    function mapStatusToRating(status) {
+      switch (status.toLowerCase()) {
+        case "excellent": return 5;
+        case "good": return 4;
+        case "moderate": return 3;
+        case "poor": return 2;
+        case "dangerous": return 1;
+        default: return 3;
+      }
+    }
+
+    function getPercentageFromRating(rating) {
+      return (rating / 5) * 100;
+    }
+
+    function getColor(rating) {
+      if (rating <= 2) return "#e53935"; // Red
+      if (rating === 3) return "#fbc02d"; // Yellow
+      return "#43a047"; // Green
+    }
+
+    function getLabelText(rating) {
+      if (rating === 5) return "Excellent";
+      if (rating === 4) return "Good";
+      if (rating === 3) return "Moderate";
+      if (rating === 2) return "Poor";
+      return "Dangerous";
+    }
+
+    function calculateEcoScore(status) {
+      const statusToScore = {
+        "Excellent": 100,
+        "Good": 85,
+        "Moderate": 65,
+        "Poor": 40,
+        "Dangerous": 20,
+      };
+      return statusToScore[status] || 50;
+    }
+
+    // Gauge Chart
+    const gaugeCtx = document.getElementById("gauge").getContext("2d");
+    const gaugeChart = new Chart(gaugeCtx, {
+      type: "doughnut",
+      data: {
+        datasets: [{
+          data: [0, 100],
+          backgroundColor: ["#ccc", "#eee"],
+          borderWidth: 0,
+        }],
+      },
+      options: {
+        circumference: 180,
+        rotation: -90,
+        cutout: "70%",
+        plugins: { tooltip: false, legend: { display: false } },
+      },
+    });
+
+    // History Chart
+    const historyCtx = document.getElementById("history-chart").getContext("2d");
+    const historyChart = new Chart(historyCtx, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: "MQ-135 (CO₂)",
+            borderColor: "#43a047",
+            backgroundColor: "rgba(67, 160, 71, 0.1)",
+            data: [],
+            tension: 0.4,
+          },
+          {
+            label: "MQ-2 (Gas)",
+            borderColor: "#fbc02d",
+            backgroundColor: "rgba(251, 192, 45, 0.1)",
+            data: [],
+            tension: 0.4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            ticks: { autoSkip: true, maxTicksLimit: 6 },
+          },
+          y: {
+            beginAtZero: true,
+            suggestedMax: 1400,
+          },
+        },
+      },
+    });
+
+    function updateHistoryChart(co2, gas, timeStamp) {
+      const label = new Date(timeStamp).toLocaleTimeString();
+
+      if (historyChart.data.labels.length >= 20) {
+        historyChart.data.labels.shift();
+        historyChart.data.datasets[0].data.shift();
+        historyChart.data.datasets[1].data.shift();
+      }
+
+      historyChart.data.labels.push(label);
+      historyChart.data.datasets[0].data.push(co2);
+      historyChart.data.datasets[1].data.push(gas);
+      historyChart.update();
+    }
+
+    function updateEcoScore(status) {
+      const score = calculateEcoScore(status);
+      document.getElementById("eco-score").textContent = score;
+    }
+
+    async function updateDashboard() {
+      try {
+        const res = await fetch("https://green-guard-gaiathon.onrender.com/meter/live");
+        const data = await res.json();
+
+        const { carbon_index1, carbon_index2, time_stamp, status } = data;
+        const rating = mapStatusToRating(status);
+        const percentage = getPercentageFromRating(rating);
+        const color = getColor(rating);
+        const label = getLabelText(rating);
+
+        // Gauge
+        gaugeChart.data.datasets[0].data = [percentage, 100 - percentage];
+        gaugeChart.data.datasets[0].backgroundColor = [color, "#eee"];
+        gaugeChart.update();
+        document.getElementById("gauge-label").textContent = label;
+
+        // History Chart & Live Readings
+        updateHistoryChart(carbon_index1, carbon_index2, time_stamp);
+        document.getElementById("co2-value").textContent = carbon_index1;
+        document.getElementById("gas-value").textContent = carbon_index2;
+        document.getElementById("last-update").textContent = new Date(time_stamp).toLocaleTimeString();
+
+        // Eco Score
+        updateEcoScore(status);
+
+      } catch (err) {
+        console.error("Dashboard update failed:", err);
+      }
+    }
+
+    async function fetchAIInsight() {
+    try {
+      const res = await fetch("https://green-guard-gaiathon.onrender.com/ai/insight", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      const data = await res.json();
+      document.getElementById("ai-insight").textContent = data.suggestion || "No insight available yet.";
+    } catch (err) {
+      console.error("Failed to fetch AI insight:", err);
+      document.getElementById("ai-insight").textContent = "Unable to load insight.";
+    }
+  }
+
+  fetchAIInsight();
+  setInterval(fetchAIInsight, 15000); // refresh every 15 seconds
+    updateDashboard();
+    setInterval(updateDashboard, 5000);
+  </script>
+
       <!-- Tips Header -->
       <h3 class="text-[22px] font-bold text-[#111811] mb-4">Tips for a Greener Life</h3>
 
