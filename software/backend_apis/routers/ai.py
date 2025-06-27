@@ -32,7 +32,7 @@ live_data_dependency =  Annotated[dict, Depends(get_latest_data)]
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")  # Store securely in env
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODEL = "llama3-70b-8192"
+GROQ_MODEL = "llama3-8b-8192"
 
 
 @router.post("/insight")
