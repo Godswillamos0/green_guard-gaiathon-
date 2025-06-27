@@ -37,7 +37,7 @@ GROQ_MODEL = "llama3-70b-8192"
 
 @router.post("/insight")
 async def generate_insight(db:db_dependency, ld:live_data_dependency):
-  datas = db.query(Datas).all  
+  datas = db.query(Datas).all()
   
   prompt = f"""
 You are GreenGuard AI, a sustainability assistant.
