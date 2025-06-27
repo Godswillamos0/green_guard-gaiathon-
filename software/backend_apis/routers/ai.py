@@ -56,13 +56,23 @@ Insight:
 
 
 def talk(question: str) -> str:
+    if not GROQ_API_KEY:
+        raise ValueError("GROQ_API_KEY is not set")
+
     client = Groq(api_key=GROQ_API_KEY)
-    completion = client.chat.completions.create(
-        model=GROQ_MODEL,
-        messages=[{"role": "user", "content": question}],
-        temperature=1,
-        max_tokens=100,
-        top_p=1,
-        stream=False  # Not streaming
-    )
-    return completion.choices[0].message.content.strip()
+
+    try:
+        completion = client.chat.completions.create(
+            model=GROQ_MODEL,
+            messages=[
+                {"role": "user", "content": question}
+            ],
+            temperature=1,
+            max_tokens=100,
+            top_p=1,
+            stream=False
+        )
+        return completion.choices[0].message.content.strip()
+    except Exception as e:
+        print("Groq API Error:", str(e))
+        raise HTTPException(status_code=400, detail="Bad Request to Groq API")
