@@ -1,23 +1,18 @@
-from typing import Annotated, Optional
-from fastapi import FastAPI, Request, APIRouter, Depends, status, HTTPException
-from pydantic import BaseModel
-from datetime import datetime
-from .esp32 import get_latest_data
-import httpx
+from typing import Annotated
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 import os
 from groq import Groq
-
 from database import SessionLocal
-from sqlalchemy.orm import Session
-from models import Meters, Users, Datas
+from models import Datas
+from .esp32 import get_latest_data
 
 router = APIRouter(
     tags=['ai'],
     prefix='/ai'
 )
 
-
-
+# Dependency injection
 def get_db():
     db = SessionLocal()
     try:
@@ -25,22 +20,19 @@ def get_db():
     finally:
         db.close()
 
-
-
 db_dependency = Annotated[Session, Depends(get_db)]
-live_data_dependency =  Annotated[dict, Depends(get_latest_data)]
+live_data_dependency = Annotated[dict, Depends(get_latest_data)]
 
-
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")  # Store securely in env
-GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODEL = "llama3-8b-8192"
-
+# Environment config
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_MODEL = "llama3-8b-8192"  # Assuming this is the correct model on Groq
 
 @router.post("/insight")
-async def generate_insight(db:db_dependency, ld:live_data_dependency):
-  datas = db.query(Datas).all()
-  
-  prompt = f"""
+async def generate_insight(db: db_dependency, ld: live_data_dependency):
+    try:
+        datas = db.query(Datas).all()
+
+        prompt = f"""
 You are GreenGuard AI, a sustainability assistant.
 
 Based on the data below, generate a short environmental insight (max 2 sentences) for the user. The tone should be practical and clear.
@@ -49,37 +41,27 @@ Past Data:
 {datas}
 
 Current:
-- CO₂ Level (MQ-135): {ld.carbon_index1}
-- Gas Level (MQ-2): {ld.carbon_index2}
-- Status: {ld.status}
--Time: {ld.time_stamp}
+- CO₂ Level (MQ-135): {ld['carbon_index1']}
+- Gas Level (MQ-2): {ld['carbon_index2']}
+- Status: {ld['status']}
+- Time: {ld['time_stamp']}
 
 Insight:
 """
-  talk(prompt)
+        insight = talk(prompt)
+        return {"insight": insight}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-def talk(Question):
-  client = Groq(api_key = GROQ_API_KEY)
-  completion = client.chat.completions.create(
-        model="llama3-70b-8192",
-        messages=[
-            {
-                "role": "user",
-                "content": Question
-            }
-        ],
+
+def talk(question: str) -> str:
+    client = Groq(api_key=GROQ_API_KEY)
+    completion = client.chat.completions.create(
+        model=GROQ_MODEL,
+        messages=[{"role": "user", "content": question}],
         temperature=1,
         max_tokens=100,
         top_p=1,
-        stream=True,
-        stop=None,
+        stream=False  # Not streaming
     )
-
-  # see this part? just take it like that 
-  all_words =[]
-  for chunk in completion:
-      all_words.append((chunk.choices[0].delta.content or ""))
-  sentence = ''
-  for word in all_words:
-    sentence = sentence + word 
-  return sentence
+    return completion.choices[0].message.content.strip()
