@@ -75,5 +75,5 @@ Insight:
         return {"suggestion": ai_message.strip()}
   else:
       print(response.status_code)  
-      return {"suggestion": "Unable to generate insight right now."}
+      return {"suggestion": " {response.status_code} Unable to generate insight right now."}
 
