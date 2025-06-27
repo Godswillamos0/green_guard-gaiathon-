@@ -1,7 +1,7 @@
 
 from fastapi import FastAPI
 import models
-from routers import auth, admin, meter, users, esp32
+from routers import auth, admin, meter, users, esp32, ai
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine
 
