@@ -2,7 +2,7 @@ from typing import Annotated, Optional
 from fastapi import FastAPI, Request, APIRouter, Depends, status, HTTPException
 from pydantic import BaseModel
 from datetime import datetime
-from esp32 import get_latest_data
+from .esp32 import get_latest_data
 import httpx
 import os
 
